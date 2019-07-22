@@ -1,3 +1,24 @@
+#' Check non numeric values
+#'
+#' Show the values that can not be casted to numeric
+#'
+#' @param x an atomic vector.
+#'
+#' @return A character vector with the values from the input vector that can't be casted to numeric.
+#' @export
+non.numeric<- function(x){
+  if (is.numeric(x)) return(character())
+
+  tmp<- suppressWarnings(as.numeric(as.character(x)))
+  sel<- which(!is.na(x) & is.na(tmp))
+
+  if (length(sel) == 0){
+    return(character())
+  }else{
+    return(unique(x[sel]))
+  }
+}
+
 #' Change data type to numeric if no data is lost
 #'
 #' @param x a variable of type \code{data.frame}, \code{list} or atomic.
