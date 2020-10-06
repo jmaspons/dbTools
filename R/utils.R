@@ -70,7 +70,7 @@ rbind_addColumns.data.frame<- function(..., deparse.level=1, make.row.names=TRUE
 
   res<- lapply(input, function(x){
     misCols<- setdiff(colNameRes, names(x))
-    misCols<- structure(as.list(rep(NA, length(misCols))), names= misCols)
+    misCols<- structure(as.list(rep(NA, length(misCols))), names=misCols)
     out<- data.frame(c(x, misCols), stringsAsFactors=stringsAsFactors, check.names=FALSE)
     out<- out[, colNameRes]
   })
@@ -90,7 +90,7 @@ rbind_addColumns.data.frame<- function(..., deparse.level=1, make.row.names=TRUE
 #' @return returns a \code{data.frame} with all the merged columns and rows
 #' @export
 merge_recursive<- function(x, all=TRUE){
-  if (length(input) < 2) return(x[[1]])
+  if (length(x) < 2) return(x[[1]])
 
   res<- x[[1]]
 
