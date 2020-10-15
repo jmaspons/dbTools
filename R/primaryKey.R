@@ -85,13 +85,14 @@ duplicatedPK<- function(x, pk){
 }
 
 
-#' Omit \code{NA}s in values for duplicated registers by PK
+#' Omit \code{NA}s in values for duplicated registers by PK and return a \code{data.frame} with a unique register for each PK if possible.
 #'
 #' @param x a \code{data.frame}
 #' @param pk columns with the primary key
 #' @param collapse a \code{character}. If no missing, duplicated values are collapsed in a string separated by \code{collapse} character.
 #'
-#' @return
+#' @return Return \code{x} removing duplicated rows by PK omitting \code{NA}s. If \code{collapse} is missing, duplicated rows by PK and different values
+#' are kept.
 #' @export
 #'
 #' @examples
@@ -100,7 +101,7 @@ na.omitValByDupPK<- function(x, pk, collapse){
 
   if (!inherits(dup, "data.frame") && is.na(dup)) return(x)
 
-  nonDup<- setdiff.data.frame(x, dup)
+  nonDup<- unique(setdiff.data.frame(x, dup))
 
   if (length(pk) > 1){
     pkString<- do.call("paste", dup[, pk])
