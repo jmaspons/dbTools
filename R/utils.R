@@ -82,11 +82,11 @@ rbind_addColumns.data.frame<- function(..., deparse.level=1, make.row.names=TRUE
 }
 
 
-#' Merge a list of \code{data.frame}s by matching column names. No use case yet
+#' Merge a list of \code{data.frame}s by matching column names
 #'
 #' @param x a list of \code{data.frame}s.
 #'
-#' @details WARNING: the order of the data.frames in the list could modify the output.
+#' @details WARNING: the order of the data.frames in the list could modify the output if all=FALSE
 #' @return returns a \code{data.frame} with all the merged columns and rows
 #' @export
 merge_recursive<- function(x, all=TRUE){

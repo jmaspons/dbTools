@@ -56,7 +56,7 @@ minimumPK<- function(x, fieldOrder=character(), excludeFields=character(), maxFi
 #' @param x a \code{data.frame}
 #' @param pk columns containing the Primary Key (column names or indexes)
 #'
-#' @return a \code{data.frame} with the duplicated registers or \code{NA} if there are no duplicates
+#' @return a \code{data.frame} with the duplicated registers or \code{NA} if there are no duplicated PK values after \code{unique(x)}.
 #' @export
 duplicatedPK<- function(x, pk){
   if (missing(pk)) pk<- colnames(x)
@@ -138,7 +138,7 @@ na.omitValByDupPK<- function(x, pk, collapse){
   outDF<- do.call("rbind", outDF)
 
   if (any(selDup)){
-    warning(sum(selDup), " non unique register for pk value: ", paste(names(selDup)[selDup], collapse=", "))
+    warning(sum(selDup), "sets of PK values with more than 1 row: ", paste(names(selDup)[selDup], collapse=", "))
 
     dupPKstring<- names(which(selDup))
     outDF<- rbind(dup[pkString %in% dupPKstring, ], outDF)
@@ -209,7 +209,7 @@ lumpDuplicatedByPK<- function(x, pk, collapse){
 }
 
 
-#' Find values whith differences for an expected unique PK value
+#' Find values with differences for an expected unique PK value
 #'
 #' @param x
 #' @param pk
