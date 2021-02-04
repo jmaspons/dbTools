@@ -35,7 +35,7 @@ summarizeByPK<- function(x, pk, collapse="|"){
       z
     })
 
-    data.frame(resPK, res, stringsAsFactors=FALSE)
+    data.frame(resPK, res, stringsAsFactors=FALSE, check.names=FALSE)
   })
 
   x.summary<- do.call(rbind, x.summary)

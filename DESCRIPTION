@@ -1,7 +1,7 @@
 Package: dbTools
 Type: Package
 Title: Tools for relational databases in R
-Version: 0.0.80
+Version: 0.1
 Authors@R: person("Joan", "Maspons", email="j.maspons@creaf.uab.cat", role=c("aut", "cre"))
 Description: Functions for integrity check and fixes for primary keys and foreign keys for tables in a relational DB.
 License: GPL-3
