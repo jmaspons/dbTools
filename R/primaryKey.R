@@ -254,10 +254,10 @@ nonUniqueValuesByPK<- function(x, pk, includeNA=FALSE, aggregateFields=FALSE){
   print(diffFields<- sort(table(unlist(nonUniqueFields))))
 
   if (aggregateFields){
-    out<- lapply(names(diffFields), function(x){
-      res<- sapply(out, function(y){
-        if (x %in% names(y)){
-          res<- y[[x]]
+    out<- lapply(names(diffFields), function(y){
+      res<- lapply(out, function(z){
+        if (y %in% names(z)){
+          res<- z[[y]]
         }else{
           res<- NULL
         }
