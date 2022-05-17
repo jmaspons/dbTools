@@ -26,8 +26,8 @@ summarizeByPK<- function(x, pk, collapse="|"){
   x.summary<- lapply(xDupL, function(y){
     resPK<- y[1, pk, drop=FALSE]
     res<- lapply(y[, setdiff(names(y), names(resPK)), drop=FALSE], function(z){
-      if (is.numeric(z)){
-        z<- mean(z)
+      if (is.numeric(z) | inherits(z, c("POSIXct", "POSIXt"))){
+        z<- mean(z, na.rm=TRUE)
       }else{
         z<- sort(unique(z), na.last=TRUE)
         z<- paste0(z, collapse=collapse)
