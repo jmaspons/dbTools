@@ -29,9 +29,18 @@ non.numeric<- function(x){
 as.numeric_noDataLost<- function(x, warning=FALSE) UseMethod("as.numeric_noDataLost")
 
 #' @export
-as.numeric_noDataLost.vector<- function(x, warning=FALSE){
-  if (is.numeric(x)) return(x)
+as.numeric_noDataLost.numeric<- function(x, warning=FALSE){
+  return(x)
+}
 
+#' @export
+as.numeric_noDataLost.factor<- function(x, warning=FALSE){
+  tmp<- suppressWarnings(as.numeric(as.character(x)))
+  as.numeric_noDataLost(tmp, warning=warning)
+}
+
+#' @export
+as.numeric_noDataLost.character<- function(x, warning=FALSE){
   tmp<- suppressWarnings(as.numeric(x))
   sel<- which(!is.na(x) & is.na(tmp))
 
@@ -44,12 +53,12 @@ as.numeric_noDataLost.vector<- function(x, warning=FALSE){
 
 #' @export
 as.numeric_noDataLost.data.frame<- function(x, warning=FALSE){
-  data.frame(lapply(x, as.numeric_noDataLost.vector, warning=warning), stringsAsFactors=FALSE, check.names=FALSE)
+  data.frame(lapply(x, as.numeric_noDataLost, warning=warning), stringsAsFactors=FALSE, check.names=FALSE)
 }
 
 #' @export
 as.numeric_noDataLost.list<- function(x, warning=FALSE){
-  lapply(x, as.numeric_noDataLost.vector, warning=warning)
+  lapply(x, as.numeric_noDataLost, warning=warning)
 }
 
 
