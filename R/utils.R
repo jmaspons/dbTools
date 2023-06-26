@@ -22,6 +22,7 @@ non.numeric<- function(x){
 #' Change data type to numeric if no data is lost
 #'
 #' @param x a variable of type \code{data.frame}, \code{list} or atomic.
+#' @param warning if `TRUE`, throw a warning indicating which values can not be casted to numeric.
 #'
 #' @return returns the same variable as a numeric type only if there is no data lost. For \code{data.frame} and \code{list},
 #'  it change the data type per column/element.
@@ -94,17 +95,21 @@ rbind_addColumns.data.frame<- function(..., deparse.level=1, make.row.names=TRUE
 #' Merge a list of \code{data.frame}s by matching column names
 #'
 #' @param x a list of \code{data.frame}s.
+#' @param all if `TRUE`, then extra rows will be added to the output, one for each row in not present in the other
+#'  ´data.frame`s that has no matching rows. These rows will have NAs in those columns that are usually filled with
+#'   values from other ´data.frame`s.
+#' @param ... other parameters to [merge()].
 #'
 #' @details WARNING: the order of the data.frames in the list could modify the output if all=FALSE
 #' @return returns a \code{data.frame} with all the merged columns and rows
 #' @export
-merge_recursive<- function(x, all=TRUE){
+merge_recursive<- function(x, all=TRUE, ...){
   if (length(x) < 2) return(x[[1]])
 
   res<- x[[1]]
 
   for (i in 2:length(x)){
-    res<- merge(res, x[[i]], all=TRUE)
+    res<- merge(res, x[[i]], all=all, ...)
   }
 
   return(res)

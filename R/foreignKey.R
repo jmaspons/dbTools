@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-missingFK<- function(x, y, fk, pk, searchCandidates=FALSE){
+missingFK<- function(x, y, fk, pk, searchCandidates=FALSE, ...){
   if (missing(fk))
     fk<- intersect(names(x), names(y))
 

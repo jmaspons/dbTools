@@ -1,7 +1,11 @@
 #' Find the minimum fields which make a valid Primary Key
 #'
-#' @param x a \code{data.frame} equivalent to a table (no duplicated registers, \code{unique(x)})
-#' @param fieldOrder a character vector with the sorted preferences in the fields part of the PK
+#' @param x a \code{data.frame} equivalent to a table (no duplicated registers, \code{unique(x)}).
+#' @param fieldOrder a character vector with the sorted preferences in the fields part of the PK.
+#' @param excludeFields columns which will be excluded from the potential primary key. Can be the index or the column
+#'   names.
+#' @param maxFields maximum number of fields in th primary key.
+#' @param minFieldSet columns that will be forced to be included in the primary key.
 #'
 #' @return
 #' @export
@@ -11,7 +15,7 @@ minimumPK<- function(x, fieldOrder=character(), excludeFields=character(), maxFi
   cols<- names(x)[!names(x) %in% c(excludeFields, minFieldSet)]
 
   ord<- match(cols, fieldOrder)
-  cols<- c(fieldOrder[stats::na.omit(ord)], cols[stats::is.na(ord)])
+  cols<- c(fieldOrder[stats::na.omit(ord)], cols[is.na(ord)])
 
   pk<- sapply(x[cols,], function(y) !any(duplicated(y))) # check single columns
   pkCandidate<- names(pk)[pk]
@@ -153,8 +157,8 @@ na.omitValByDupPK<- function(x, pk, collapse){
 #' For duplicated rows, omit \code{NA}s and take unique values in columns when at least one value exists to reduce the
 #' duplicates.
 #'
-#' @param x a \code{data.frame}
-#' @param pk columns with the primary key
+#' @param x a \code{data.frame}.
+#' @param pk columns with the primary key.
 #' @param collapse a \code{character}. If no missing, duplicated values are collapsed in a string separated by \code{collapse} character.
 #' @param tryNumeric if \code{TRUE}, convert values to numeric if no data is lost and take the mean if values are similar.
 #' @param tolerance relative tolerance passed to \code{all.equal} when comparing values if \code{tryNumeric} is \code{TRUE}.
@@ -240,8 +244,8 @@ lumpDuplicatedByPK<- function(x, pk, collapse, tryNumeric=FALSE, tolerance=sqrt(
 
 #' Find values with differences for an expected unique PK value
 #'
-#' @param x
-#' @param pk
+#' @param x a \code{data.frame}.
+#' @param pk columns with the primary key.
 #' @param includeNA treat NA as a value or omit them
 #' @param aggregateFields if \code{TRUE}, aggregate by fields with non-unique values instead of by PK values.
 #'

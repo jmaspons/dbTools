@@ -13,9 +13,9 @@ lumpDuplicatedByPK(
 )
 }
 \arguments{
-\item{x}{a \code{data.frame}}
+\item{x}{a \code{data.frame}.}
 
-\item{pk}{columns with the primary key}
+\item{pk}{columns with the primary key.}
 
 \item{collapse}{a \code{character}. If no missing, duplicated values are collapsed in a string separated by \code{collapse} character.}
 
