@@ -11,7 +11,7 @@ minimumPK<- function(x, fieldOrder=character(), excludeFields=character(), maxFi
   cols<- names(x)[!names(x) %in% c(excludeFields, minFieldSet)]
 
   ord<- match(cols, fieldOrder)
-  cols<- c(fieldOrder[na.omit(ord)], cols[is.na(ord)])
+  cols<- c(fieldOrder[stats::na.omit(ord)], cols[stats::is.na(ord)])
 
   pk<- sapply(x[cols,], function(y) !any(duplicated(y))) # check single columns
   pkCandidate<- names(pk)[pk]
@@ -27,7 +27,7 @@ minimumPK<- function(x, fieldOrder=character(), excludeFields=character(), maxFi
   }
 
   for (i in i0:min(c(maxFields, length(cols)))){
-    comb<- combn(cols, i, simplify=FALSE)
+    comb<- utils::combn(cols, i, simplify=FALSE)
 
     message("Try whith ", i + length(minFieldSet), " fields. ", length(comb), " combinations.", appendLF=FALSE)
 
@@ -119,7 +119,7 @@ na.omitValByDupPK<- function(x, pk, collapse){
       if (length(z) == 1)
         return(z)
 
-      return(na.omit(z))
+      return(stats::na.omit(z))
     })
 
     len<- sapply(outL, length)
