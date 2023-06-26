@@ -148,44 +148,78 @@ na.omitValByDupPK<- function(x, pk, collapse){
 }
 
 
-#' Lump duplicated registers by PK omitting \code{NA}s
+#' Lump duplicated registers by PK
+#'
+#' For duplicated rows, omit \code{NA}s and take unique values in columns when at least one value exists to reduce the
+#' duplicates.
 #'
 #' @param x a \code{data.frame}
 #' @param pk columns with the primary key
 #' @param collapse a \code{character}. If no missing, duplicated values are collapsed in a string separated by \code{collapse} character.
+#' @param tryNumeric if \code{TRUE}, convert values to numeric if no data is lost and take the mean if values are similar.
+#' @param tolerance relative tolerance passed to \code{all.equal} when comparing values if \code{tryNumeric} is \code{TRUE}.
 #'
-#' @return
+#' @return a named `list` with a `df` item for the x rows without duplicates and a `dup` item with duplicated rows.
 #' @export
 #'
 #' @examples
-lumpDuplicatedByPK<- function(x, pk, collapse){
+lumpDuplicatedByPK<- function(x, pk, collapse, tryNumeric=FALSE, tolerance=sqrt(.Machine$double.eps)){
+  if (missing(pk)) pk<- colnames(x)
+  if (missing(collapse)) collapse<- NULL
+
   if (length(pk) > 1){
     pkString<- do.call("paste", x[, pk])
   }else{
     pkString<- x[, pk]
   }
 
-  outL<- by(x, pkString, function(y, collapse=collapse){
+  outL<- by(x, pkString, function(y){
     y<- unique(y)
-    if (nrow(y) == 1) return(y)
+    if (nrow(y) == 1)
+      return(y)
 
-    outL<- lapply(y, function(z){
+    columnL<- lapply(y, function(z){ # Loop columns
       z<- unique(z)
 
       if (length(z) == 1)
         return(z)
 
-      return(na.omit(z))
+      if (length(stats::na.omit(z)) == 1)
+        return(stats::na.omit(z))
+
+      if (tryNumeric){ ## TODO: allow to select which columns (tryNumeric<- vector)
+        vals<- as.numeric_noDataLost(z)
+        equal<- FALSE
+        if (is.numeric(vals)){
+          if (length(vals) == 2){
+            tolerance<- mean(vals) * tolerance
+            equal<- isTRUE(do.call(all.equal, c(as.list(vals), list(tolerance=tolerance))))
+          }
+        }
+        if (equal){
+          vals<- mean(vals)
+          if (is.character(z)){
+            z<- as.character(vals)
+          } else if (is.factor(z)){
+            z<- as.factor(vals)
+          } else if (is.logical(z)){
+            z<- as.logical(vals)
+          } else if (is.numeric(z)){
+            z<- vals
+          }
+        }
+        if (length(z) == 1)
+          return(z)
+      }
+
+      if (!is.null(collapse)){
+        z<- paste(z, collapse=collapse)
+      }
+
+      return(z)
     })
 
-    len<- sapply(outL, length)
-    selDup<- which(len > 1)
-
-    if (length(selDup) > 0 & !missing(collapse)){
-      outL[selDup]<- lapply(outL[selDup], function(z) paste(z, collapse=collapse))
-    }
-
-    outL
+    columnL
   })
 
   selDup<- sapply(outL, function(y) any(sapply(y, length) > 1))
@@ -197,15 +231,10 @@ lumpDuplicatedByPK<- function(x, pk, collapse){
   outDF<- lapply(outL[!selDup], function(y) data.frame(y, stringsAsFactors=FALSE, check.names=FALSE))
   outDF<- do.call("rbind", outDF)
 
-  # if (toString | length(selDup) == 0){
-  #   ouF<- data.frame(out, stringsAsFactors=FALSE, check.names=FALSE)
-  #   out<- do.call("rbind", out)
-  # } else {
-  #  ## TODO: data.frame with different number of rows
-  #   ## return a list for now
-  # }
+  outDF_dup<- lapply(outL[selDup], function(y) data.frame(y, stringsAsFactors=FALSE, check.names=FALSE))
+  outDF_dup<- do.call("rbind", outDF_dup)
 
-  return (list(df=outDF, dup=outL[selDup]))
+  return (list(df=outDF, dup=outDF_dup))
 }
 
 
